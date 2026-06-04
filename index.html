@@ -250,8 +250,26 @@
       <h3>RSVP Responses</h3>
       <div class="admin-toolbar">
         <span id="adminCount">0 responses</span>
-        <button class="admin-btn" id="exportBtn">Export CSV</button>
+        <button class="admin-btn" id="exportBtn">Export XLSX</button>
         <button class="admin-btn admin-btn-close" id="closeAdminBtn">Close</button>
+      </div>
+      <div class="admin-stats" id="adminStats">
+        <div class="stat-item">
+          <span class="stat-val" id="statAttending">—</span>
+          <span class="stat-label">Attending</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val" id="statNotAttending">—</span>
+          <span class="stat-label">Not Attending</span>
+        </div>
+        <div class="stat-item stat-item--highlight">
+          <span class="stat-val" id="statHeadcount">—</span>
+          <span class="stat-label">Total Headcount</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val" id="statCompanions">—</span>
+          <span class="stat-label">Companions</span>
+        </div>
       </div>
       <div class="admin-table-wrap">
         <table id="adminTable">
@@ -273,6 +291,33 @@
     </div>
   </div>
 
+  <!-- SheetJS for multi-sheet XLSX export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="script.js"></script>
+
+  <style>
+    .admin-stats {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      padding: .75rem 1rem;
+      background: rgba(0,0,0,.15);
+      border-radius: .5rem;
+      margin-bottom: .75rem;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 70px;
+      padding: .4rem .5rem;
+      border-radius: .4rem;
+      background: rgba(255,255,255,.05);
+    }
+    .stat-item--highlight { background: rgba(99,102,241,.25); }
+    .stat-val   { font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
+    .stat-label { font-size: .68rem; opacity: .65; text-transform: uppercase; letter-spacing: .05em; margin-top: .15rem; }
+  </style>
 </body>
 </html>

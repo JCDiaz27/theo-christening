@@ -330,6 +330,16 @@ function renderAdminTable(responses) {
   adminTableBody.innerHTML = '';
   adminCount.textContent = `${responses.length} response${responses.length !== 1 ? 's' : ''}`;
 
+  // ── stats ──
+  const attending     = responses.filter(r => r.attending === 'Yes');
+  const notAttending  = responses.filter(r => r.attending === 'No');
+  const totalHeadcount  = attending.reduce((s, r) => s + (Number(r.guests) || 0), 0);
+  const totalCompanions = attending.reduce((s, r) => s + Math.max(0, (Number(r.guests) || 1) - 1), 0);
+  document.getElementById('statAttending').textContent    = attending.length;
+  document.getElementById('statNotAttending').textContent = notAttending.length;
+  document.getElementById('statHeadcount').textContent    = totalHeadcount;
+  document.getElementById('statCompanions').textContent   = totalCompanions;
+
   if (responses.length === 0) {
     adminEmpty.style.display = 'block';
     return;
@@ -377,30 +387,76 @@ exportBtn.addEventListener('click', async () => {
     }
   } catch (_) { /* ignore */ }
   if (!responses.length) responses = getLocal();
-  exportBtn.textContent = 'Export CSV';
+  exportBtn.textContent = 'Export XLSX';
   exportBtn.disabled = false;
   if (!responses.length) { alert('No responses to export yet.'); return; }
 
-  const header = ['#', 'Name', 'Attending', 'Guests', 'Guest Names', 'Message', 'Submitted'];
-  const rows   = responses.map((r, i) => [
-    i + 1,
-    `"${r.name.replace(/"/g, '""')}"`,
-    r.attending,
-    r.guests,
-    `"${(r.guestNames || []).join('; ').replace(/"/g, '""')}"`,
-    `"${(r.message || '').replace(/"/g, '""')}"`,
-    formatDate(r.timestamp),
-  ]);
-
-  const csv  = [header.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = 'theo-christening-rsvp.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+  exportXLSX(responses);
 });
+
+function exportXLSX(responses) {
+  const wb = XLSX.utils.book_new();
+
+  // ── Sheet 1: RSVPs ──────────────────────────────────────────────────────
+  const rsvpRows = [
+    ['#', 'Name', 'Attending', 'Guests', 'Guest Names', 'Message', 'Submitted'],
+    ...responses.map((r, i) => [
+      i + 1,
+      r.name,
+      r.attending,
+      Number(r.guests) || 0,
+      (r.guestNames || []).join(', '),
+      r.message || '',
+      formatDate(r.timestamp),
+    ]),
+  ];
+  const wsRSVP = XLSX.utils.aoa_to_sheet(rsvpRows);
+  // Column widths
+  wsRSVP['!cols'] = [
+    { wch: 4 }, { wch: 26 }, { wch: 12 }, { wch: 8 },
+    { wch: 32 }, { wch: 36 }, { wch: 20 },
+  ];
+  XLSX.utils.book_append_sheet(wb, wsRSVP, 'RSVPs');
+
+  // ── Sheet 2: Summary ────────────────────────────────────────────────────
+  const attending      = responses.filter(r => r.attending === 'Yes');
+  const notAttending   = responses.filter(r => r.attending === 'No');
+  const totalHeadcount  = attending.reduce((s, r) => s + (Number(r.guests) || 0), 0);
+  const totalCompanions = attending.reduce((s, r) => s + Math.max(0, (Number(r.guests) || 1) - 1), 0);
+
+  const summaryRows = [
+    ['Metric', 'Value'],
+    ['Total RSVPs',       responses.length],
+    ['Attending',         attending.length],
+    ['Not Attending',     notAttending.length],
+    ['Total Headcount',   totalHeadcount],
+    ['Total Companions',  totalCompanions],
+    [],
+    ['Export Date', new Date().toLocaleString('en-PH', {
+      dateStyle: 'long', timeStyle: 'short',
+    })],
+  ];
+  const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+  wsSummary['!cols'] = [{ wch: 20 }, { wch: 16 }];
+  XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+  // ── Sheet 3: Guest List ─────────────────────────────────────────────────
+  // Format: RSVP name as group header, companions listed below.
+  // Only includes "Yes" responses.
+  const guestRows = [['Name', 'Role', 'RSVP Group']];
+  attending.forEach(r => {
+    guestRows.push([r.name, 'RSVP', r.name]);
+    (r.guestNames || []).forEach((guest, i) => {
+      if (guest) guestRows.push([guest, `Companion ${i + 1}`, r.name]);
+    });
+    guestRows.push(['', '', '']); // blank row between groups
+  });
+  const wsGuests = XLSX.utils.aoa_to_sheet(guestRows);
+  wsGuests['!cols'] = [{ wch: 26 }, { wch: 14 }, { wch: 26 }];
+  XLSX.utils.book_append_sheet(wb, wsGuests, 'Guest List');
+
+  XLSX.writeFile(wb, 'theo-christening-rsvp.xlsx');
+}
 
 // ─────────────────────────────────────────
 // HELPERS
