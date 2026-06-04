@@ -7,7 +7,7 @@
  * so the page always works locally too.
  */
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycQR7ARFuZZTxfV5G5hbk9uE0pXrxPTAJrhbu4zSWhKbRvY7L1T1pe2Skt1Pvz6Tv2vQ/exec'; // ← paste your Web App URL here after setup
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwy0K0vWr5tdXti3uKhhJhduhFFjgM6Ikam4QB6Gs32uAuXZaMuCKhd2qvMfjJDvJe6HA/exec'; // ← paste your Web App URL here after setup
 
 // ─────────────────────────────────────────
 // DOM REFERENCES
@@ -177,13 +177,7 @@ form.addEventListener('submit', async (e) => {
   setLoading(true);
 
   try {
-    if (APPS_SCRIPT_URL) {
-      await submitToGoogleSheets(payload);
-    } else {
-      // Fallback: save to localStorage for demo / testing
-      saveLocal(payload);
-      await fakeDelay(700); // simulate network
-    }
+    await submitToGoogleSheets(payload);
     showSuccess(payload);
   } catch (err) {
     console.error('RSVP submission error:', err);
@@ -198,30 +192,33 @@ form.addEventListener('submit', async (e) => {
 // GOOGLE SHEETS SUBMISSION
 // ─────────────────────────────────────────
 async function submitToGoogleSheets(payload) {
-  const res = await fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+  // CORS fix for GitHub Pages → Google Apps Script:
+  // Sending JSON with Content-Type: application/json triggers a CORS preflight
+  // that Apps Script does not handle, causing a network error in the browser.
+  //
+  // Fix: send with Content-Type: text/plain (a "simple" type — no preflight)
+  // and mode: no-cors so the browser sends the request directly.
+  // Apps Script reads the body via e.postData.contents and JSON.parses it as normal.
+  // The response is opaque (we can't read it), but the write still happens.
+  await fetch(APPS_SCRIPT_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body:    JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error('Server returned ' + res.status);
-  const json = await res.json().catch(() => ({}));
-  if (json.status === 'error') throw new Error(json.message || 'Unknown error from server');
-  // Save locally as a backup copy
-  saveLocal(payload);
 }
 
 // ─────────────────────────────────────────
-// LOCAL STORAGE (FALLBACK / CACHE)
+// IN-MEMORY STORE (no localStorage)
 // ─────────────────────────────────────────
+const _responses = [];
+
 function saveLocal(payload) {
-  const key  = 'theo_rsvp_responses';
-  const list = JSON.parse(localStorage.getItem(key) || '[]');
-  list.push(payload);
-  localStorage.setItem(key, JSON.stringify(list));
+  _responses.push(payload);
 }
 
 function getLocal() {
-  return JSON.parse(localStorage.getItem('theo_rsvp_responses') || '[]');
+  return _responses;
 }
 
 // ─────────────────────────────────────────
