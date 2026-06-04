@@ -300,10 +300,30 @@ function fakeDelay(ms) {
 // ─────────────────────────────────────────
 // ADMIN PANEL
 // ─────────────────────────────────────────
-function openAdmin() {
-  const responses = getLocal();
+async function openAdmin() {
   adminPanel.classList.remove('hidden');
-  renderAdminTable(responses);
+
+  // Show loading state
+  adminCount.textContent = 'Loading…';
+  adminTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:1.5rem;opacity:.5;">Fetching responses…</td></tr>';
+  adminEmpty.style.display = 'none';
+
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL + '?action=list');
+    const json = await res.json();
+    if (json.status === 'ok' && Array.isArray(json.data)) {
+      // Merge sheet data with any new in-session submissions not yet in sheet
+      const sheetIds   = new Set(json.data.map(r => r.timestamp));
+      const newLocal   = getLocal().filter(r => !sheetIds.has(r.timestamp));
+      const merged     = [...json.data, ...newLocal];
+      renderAdminTable(merged);
+    } else {
+      renderAdminTable(getLocal());
+    }
+  } catch (err) {
+    console.warn('Could not fetch from sheet, showing session data:', err);
+    renderAdminTable(getLocal());
+  }
 }
 
 function renderAdminTable(responses) {
@@ -343,8 +363,22 @@ adminPanel.addEventListener('click', (e) => {
 // ─────────────────────────────────────────
 // CSV EXPORT
 // ─────────────────────────────────────────
-exportBtn.addEventListener('click', () => {
-  const responses = getLocal();
+exportBtn.addEventListener('click', async () => {
+  exportBtn.textContent = 'Fetching…';
+  exportBtn.disabled = true;
+  let responses = [];
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL + '?action=list');
+    const json = await res.json();
+    if (json.status === 'ok' && Array.isArray(json.data)) {
+      const sheetIds = new Set(json.data.map(r => r.timestamp));
+      const newLocal = getLocal().filter(r => !sheetIds.has(r.timestamp));
+      responses = [...json.data, ...newLocal];
+    }
+  } catch (_) { /* ignore */ }
+  if (!responses.length) responses = getLocal();
+  exportBtn.textContent = 'Export CSV';
+  exportBtn.disabled = false;
   if (!responses.length) { alert('No responses to export yet.'); return; }
 
   const header = ['#', 'Name', 'Attending', 'Guests', 'Guest Names', 'Message', 'Submitted'];
