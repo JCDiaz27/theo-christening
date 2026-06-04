@@ -7,7 +7,7 @@
  * so the page always works locally too.
  */
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwy0K0vWr5tdXti3uKhhJhduhFFjgM6Ikam4QB6Gs32uAuXZaMuCKhd2qvMfjJDvJe6HA/exec'; // ← paste your Web App URL here after setup
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycQR7ARFuZZTxfV5G5hbk9uE0pXrxPTAJrhbu4zSWhKbRvY7L1T1pe2Skt1Pvz6Tv2vQ/exec'; // ← paste your Web App URL here after setup
 
 // ─────────────────────────────────────────
 // DOM REFERENCES
@@ -178,6 +178,7 @@ form.addEventListener('submit', async (e) => {
 
   try {
     await submitToGoogleSheets(payload);
+    saveLocal(payload); // keep admin panel populated for this session
     showSuccess(payload);
   } catch (err) {
     console.error('RSVP submission error:', err);
