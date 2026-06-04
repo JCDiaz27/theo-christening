@@ -7,7 +7,7 @@
  * so the page always works locally too.
  */
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycQR7ARFuZZTxfV5G5hbk9uE0pXrxPTAJrhbu4zSWhKbRvY7L1T1pe2Skt1Pvz6Tv2vQ/exec'; // ← paste your Web App URL here after setup
+const APPS_SCRIPT_URL = ''; // ← paste your Web App URL here after setup
 
 // ─────────────────────────────────────────
 // DOM REFERENCES
@@ -18,7 +18,14 @@ const btnText      = submitBtn.querySelector('.btn-text');
 const btnLoading   = submitBtn.querySelector('.btn-loading');
 const successState = document.getElementById('successState');
 const successMsg   = document.getElementById('successMessage');
-const rsvpAgainBtn = document.getElementById('rsvpAgainBtn');
+const rsvpAgainBtn  = document.getElementById('rsvpAgainBtn');
+
+// Error modal
+const errorModal      = document.getElementById('errorModal');
+const errorModalMsg   = document.getElementById('errorModalMessage');
+const modalRetryBtn   = document.getElementById('modalRetryBtn');
+const modalDismissBtn = document.getElementById('modalDismissBtn');
+let   lastPayload     = null; // stored for retry
 
 const nameInput    = document.getElementById('fullName');
 const nameError    = document.getElementById('nameError');
@@ -180,7 +187,8 @@ form.addEventListener('submit', async (e) => {
     showSuccess(payload);
   } catch (err) {
     console.error('RSVP submission error:', err);
-    alert('Something went wrong. Please try again or contact the organizer.');
+    lastPayload = payload;
+    showErrorModal(err);
   } finally {
     setLoading(false);
   }
@@ -192,11 +200,13 @@ form.addEventListener('submit', async (e) => {
 async function submitToGoogleSheets(payload) {
   const res = await fetch(APPS_SCRIPT_URL, {
     method: 'POST',
-    mode: 'no-cors', // Apps Script requires no-cors
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  // no-cors means we can't read the response — save locally too as a backup
+  if (!res.ok) throw new Error('Server returned ' + res.status);
+  const json = await res.json().catch(() => ({}));
+  if (json.status === 'error') throw new Error(json.message || 'Unknown error from server');
+  // Save locally as a backup copy
   saveLocal(payload);
 }
 
@@ -234,8 +244,52 @@ function showSuccess(payload) {
 rsvpAgainBtn.addEventListener('click', () => {
   form.reset();
   guestField.classList.add('hidden');
+  guestNamesField.classList.add('hidden');
   form.classList.remove('hidden');
   successState.classList.add('hidden');
+});
+
+// ─────────────────────────────────────────
+// ERROR MODAL
+// ─────────────────────────────────────────
+function showErrorModal(err) {
+  const isNetwork = err instanceof TypeError;
+  errorModalMsg.textContent = isNetwork
+    ? "Looks like there's a network issue. Your response was saved locally — tap Try Again when you're back online."
+    : "Something went wrong sending your RSVP to our sheet. Your response is saved on your device — tap Try Again or contact the organizer.";
+  errorModal.classList.remove('hidden');
+  modalRetryBtn.focus();
+}
+
+function closeErrorModal() {
+  errorModal.classList.add('hidden');
+}
+
+modalRetryBtn.addEventListener('click', async () => {
+  if (!lastPayload) return;
+  closeErrorModal();
+  setLoading(true);
+  try {
+    await submitToGoogleSheets(lastPayload);
+    showSuccess(lastPayload);
+  } catch (err) {
+    console.error('Retry failed:', err);
+    showErrorModal(err);
+  } finally {
+    setLoading(false);
+  }
+});
+
+modalDismissBtn.addEventListener('click', closeErrorModal);
+
+// Close on overlay click
+errorModal.addEventListener('click', (e) => {
+  if (e.target === errorModal) closeErrorModal();
+});
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !errorModal.classList.contains('hidden')) closeErrorModal();
 });
 
 // ─────────────────────────────────────────
