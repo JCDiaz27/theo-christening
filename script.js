@@ -7,7 +7,7 @@
  * so the page always works locally too.
  */
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzL_xq5bG_3wBVTmXW_cFN7q1PAx8NtS5kbmjqz5JW5MzKcaYdCAb2eSYULw8Iy_5y/exec'; // ← paste your Web App URL here after setup
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycQR7ARFuZZTxfV5G5hbk9uE0pXrxPTAJrhbu4zSWhKbRvY7L1T1pe2Skt1Pvz6Tv2vQ/exec'; // ← paste your Web App URL here after setup
 
 // ─────────────────────────────────────────
 // DOM REFERENCES
