@@ -42,14 +42,68 @@
 
 /* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { height: 100%; overflow: hidden; }
 body {
   font-family: var(--font-body);
   background: var(--blue-50);
   color: var(--gray-700);
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden;
   line-height: 1.6;
+}
+
+/* ── PAGE SCROLL CONTAINER ── */
+.page-wrap {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  position: relative;
+  z-index: 1;
+  /* slim scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(60,100,170,.15) transparent;
+}
+.page-wrap::-webkit-scrollbar { width: 4px; }
+.page-wrap::-webkit-scrollbar-track { background: transparent; }
+.page-wrap::-webkit-scrollbar-thumb {
+  background: rgba(60,100,170,.2);
+  border-radius: 4px;
+}
+
+/* ── SECTION NAVIGATION DOTS ── */
+.section-dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue-200);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background .3s ease, transform .3s ease, height .3s ease;
+}
+.dot--active {
+  background: var(--blue-500);
+  height: 22px;
+  border-radius: 4px;
+  transform: none;
+}
+.dot:hover:not(.dot--active) {
+  background: var(--blue-300);
+  transform: scale(1.2);
 }
 
 /* ── BACKGROUND MESH ── */
@@ -125,11 +179,9 @@ body::before {
 
 /* ── MAIN ── */
 main {
-  position: relative;
-  z-index: 1;
   max-width: 620px;
   margin: 0 auto;
-  padding: 0 20px 60px;
+  padding: 0 20px;
 }
 
 /* ── FADE-IN ANIMATIONS ── */
@@ -147,11 +199,18 @@ main {
 /* ── HERO ── */
 .hero {
   text-align: center;
-  padding: 72px 0 56px;
+  padding: 56px 0 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 18px;
+  /* snap */
+  min-height: 100vh;
+  min-height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  box-sizing: border-box;
 }
 
 /* ── HERO PHOTO PORTRAIT ── */
@@ -373,6 +432,19 @@ h1 {
   letter-spacing: .06em;
   text-transform: uppercase;
   animation: bounceCue 2s ease-in-out infinite 1.5s;
+  /* reset button styles */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  transition: color var(--transition), background var(--transition);
+}
+.scroll-cue:hover {
+  color: var(--blue-500);
+  background: rgba(59,144,244,.07);
+  animation-play-state: paused;
 }
 @keyframes bounceCue {
   0%, 100% { transform: translateY(0); }
@@ -380,7 +452,18 @@ h1 {
 }
 
 /* ── RSVP SECTION ── */
-.rsvp-section { padding: 0 0 20px; }
+.rsvp-section {
+  padding: 40px 0 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* snap */
+  min-height: 100vh;
+  min-height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  box-sizing: border-box;
+}
 
 .rsvp-card {
   background: var(--white);
@@ -812,7 +895,8 @@ tr:hover td { background: var(--blue-50); }
 @media (max-width: 480px) {
   .rsvp-card { padding: 28px 20px; }
   .title-name { font-size: clamp(3rem, 18vw, 4.5rem); }
-  .hero { padding: 52px 0 40px; }
+  .hero { padding: 40px 0 36px; gap: 14px; }
+  .section-dots { right: 10px; }
 }
 
 /* ── GUEST NAMES ── */

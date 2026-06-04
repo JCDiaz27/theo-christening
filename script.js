@@ -485,6 +485,61 @@ if (new URLSearchParams(window.location.search).get('admin') === '1') {
 window.openAdmin = openAdmin;
 
 // ─────────────────────────────────────────
+// FULL-PAGE SCROLL NAVIGATION
+// ─────────────────────────────────────────
+(function () {
+  const pageWrap   = document.getElementById('pageWrap');
+  const heroSection = document.querySelector('.hero');
+  const rsvpSection = document.querySelector('.rsvp-section');
+  const scrollCue  = document.getElementById('scrollCue');
+  const dots       = document.querySelectorAll('.dot');
+
+  if (!pageWrap || !heroSection || !rsvpSection) return;
+
+  // Scroll cue → jump to form
+  if (scrollCue) {
+    scrollCue.addEventListener('click', () => {
+      pageWrap.scrollTo({ top: rsvpSection.offsetTop, behavior: 'smooth' });
+    });
+  }
+
+  // Dot click → scroll to section
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const idx = Number(dot.dataset.index);
+      const target = idx === 0 ? heroSection : rsvpSection;
+      pageWrap.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+    });
+  });
+
+  // Update active dot as user scrolls
+  function updateDots() {
+    const scrollMid = pageWrap.scrollTop + pageWrap.clientHeight / 2;
+    const onRsvp    = scrollMid >= rsvpSection.offsetTop;
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('dot--active', onRsvp ? i === 1 : i === 0);
+    });
+  }
+
+  pageWrap.addEventListener('scroll', updateDots, { passive: true });
+  updateDots(); // init
+
+  // Keyboard: arrow keys scroll between sections
+  document.addEventListener('keydown', (e) => {
+    // Only when no input is focused
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      e.preventDefault();
+      pageWrap.scrollTo({ top: rsvpSection.offsetTop, behavior: 'smooth' });
+    }
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault();
+      pageWrap.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+})();
+
+// ─────────────────────────────────────────
 // BABY PHOTO — graceful fallback to placeholder
 // ─────────────────────────────────────────
 const photoImg = document.querySelector('.hero-photo-img');
