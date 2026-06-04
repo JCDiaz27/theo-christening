@@ -230,6 +230,20 @@
 
   </main>
 
+
+  <!-- ── ERROR MODAL ── -->
+  <div class="modal-overlay hidden" id="errorModal" role="dialog" aria-modal="true" aria-labelledby="errorModalTitle">
+    <div class="modal-card">
+      <div class="modal-icon modal-icon--error" aria-hidden="true">⚠️</div>
+      <h3 id="errorModalTitle">Couldn't send your RSVP</h3>
+      <p id="errorModalMessage">Something went wrong while submitting. Your response has been saved locally — please try again or reach out to the organizer directly.</p>
+      <div class="modal-actions">
+        <button class="btn-modal-retry" id="modalRetryBtn">Try Again</button>
+        <button class="btn-modal-dismiss" id="modalDismissBtn">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Admin link (hidden, accessible via ?admin=1) -->
   <div id="adminPanel" class="admin-panel hidden">
     <div class="admin-inner">
