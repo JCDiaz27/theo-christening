@@ -63,6 +63,7 @@ body {
   /* slim scrollbar */
   scrollbar-width: thin;
   scrollbar-color: rgba(60,100,170,.15) transparent;
+  overscroll-behavior: none; /* prevent pull-to-refresh interfering with parallax */
 }
 .page-wrap::-webkit-scrollbar { width: 4px; }
 .page-wrap::-webkit-scrollbar-track { background: transparent; }
@@ -211,6 +212,7 @@ main {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   box-sizing: border-box;
+  will-change: transform, opacity; /* promoted to GPU layer for smooth parallax */
 }
 
 /* ── HERO PHOTO PORTRAIT ── */
@@ -463,6 +465,7 @@ h1 {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   box-sizing: border-box;
+  will-change: transform, opacity; /* promoted to GPU layer for smooth parallax */
 }
 
 .rsvp-card {
@@ -473,6 +476,7 @@ h1 {
   box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
+  will-change: transform, opacity; /* GPU layer for slide-in animation */
 }
 .rsvp-card::before {
   content: '';

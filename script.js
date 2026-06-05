@@ -488,55 +488,133 @@ window.openAdmin = openAdmin;
 // FULL-PAGE SCROLL NAVIGATION
 // ─────────────────────────────────────────
 (function () {
-  const pageWrap   = document.getElementById('pageWrap');
+  const pageWrap    = document.getElementById('pageWrap');
   const heroSection = document.querySelector('.hero');
   const rsvpSection = document.querySelector('.rsvp-section');
-  const scrollCue  = document.getElementById('scrollCue');
-  const dots       = document.querySelectorAll('.dot');
+  const rsvpCard    = document.querySelector('.rsvp-card');
+  const scrollCue   = document.getElementById('scrollCue');
+  const dots        = document.querySelectorAll('.dot');
 
   if (!pageWrap || !heroSection || !rsvpSection) return;
 
-  // Scroll cue → jump to form
-  if (scrollCue) {
-    scrollCue.addEventListener('click', () => {
-      pageWrap.scrollTo({ top: rsvpSection.offsetTop, behavior: 'smooth' });
-    });
+  let current   = 0;     // 0 = hero, 1 = form
+  let animating = false;
+  let animFrame = null;
+
+  // ── Parallax + content fade ──────────────────────────────────────────────
+  // Called every frame during animation AND on native scroll events.
+  // progress 0 = fully on hero, 1 = fully on form.
+  function applyParallax() {
+    const snap     = rsvpSection.offsetTop;
+    if (!snap) return;
+    const progress = Math.min(Math.max(pageWrap.scrollTop / snap, 0), 1.05);
+
+    // Hero: drifts upward and fades out as you scroll away
+    heroSection.style.transform = `translateY(${-progress * 55}px)`;
+    heroSection.style.opacity   = Math.max(0, 1 - progress * 1.35).toFixed(3);
+
+    // Card: rises up from below and fades in as form section enters
+    if (rsvpCard) {
+      const cp = Math.max(0, Math.min(1, (progress - 0.2) / 0.8));
+      rsvpCard.style.transform = `translateY(${(1 - cp) * 48}px)`;
+      rsvpCard.style.opacity   = cp.toFixed(3);
+    }
   }
 
-  // Dot click → scroll to section
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const idx = Number(dot.dataset.index);
-      const target = idx === 0 ? heroSection : rsvpSection;
-      pageWrap.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
-    });
-  });
+  // ── Custom smooth scroll (easeInOutCubic, 850 ms) ───────────────────────
+  // Replaces browser scroll-behavior so we control the curve precisely.
+  function goTo(index, ms) {
+    if (animating) return;
+    ms = ms || 850;
 
-  // Update active dot as user scrolls
-  function updateDots() {
-    const scrollMid = pageWrap.scrollTop + pageWrap.clientHeight / 2;
-    const onRsvp    = scrollMid >= rsvpSection.offsetTop;
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('dot--active', onRsvp ? i === 1 : i === 0);
-    });
+    const from = pageWrap.scrollTop;
+    const to   = index === 0 ? 0 : rsvpSection.offsetTop;
+    const dist = to - from;
+    if (Math.abs(dist) < 2) return;
+
+    animating = true;
+    current   = index;
+    refreshDots();
+
+    const t0 = performance.now();
+    if (animFrame) cancelAnimationFrame(animFrame);
+
+    function tick(now) {
+      const t     = Math.min((now - t0) / ms, 1);
+      // easeInOutCubic: slow start → fast middle → slow end
+      const eased = t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+      pageWrap.scrollTop = from + dist * eased;
+      applyParallax(); // update parallax on every animation frame
+
+      if (t < 1) {
+        animFrame = requestAnimationFrame(tick);
+      } else {
+        pageWrap.scrollTop = to;
+        applyParallax();
+        animating = false;
+      }
+    }
+
+    animFrame = requestAnimationFrame(tick);
   }
 
-  pageWrap.addEventListener('scroll', updateDots, { passive: true });
-  updateDots(); // init
+  // ── Dot state ────────────────────────────────────────────────────────────
+  function refreshDots() {
+    dots.forEach((d, i) => d.classList.toggle('dot--active', i === current));
+  }
 
-  // Keyboard: arrow keys scroll between sections
+  // ── Native scroll (CSS snap on touch + keyboard fallback) ────────────────
+  // Keeps parallax and dots in sync when the browser moves the scroll
+  // position itself (touch snap, programmatic scrolls, etc.).
+  let rafPending = false;
+  pageWrap.addEventListener('scroll', () => {
+    if (animating) return; // custom animation handles its own parallax
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(() => {
+        applyParallax();
+        const mid = pageWrap.scrollTop + pageWrap.clientHeight * 0.5;
+        const was = current;
+        current = mid >= rsvpSection.offsetTop ? 1 : 0;
+        if (current !== was) refreshDots();
+        rafPending = false;
+      });
+    }
+  }, { passive: true });
+
+  // ── Wheel — intercept and drive with custom easing ───────────────────────
+  let lastWheel = 0;
+  pageWrap.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (animating) return;
+    const now = Date.now();
+    if (now - lastWheel < 300) return; // swallow rapid multi-notch events
+    lastWheel = now;
+    if (e.deltaY > 0 && current < 1) goTo(1);
+    else if (e.deltaY < 0 && current > 0) goTo(0);
+  }, { passive: false });
+
+  // ── Scroll cue ───────────────────────────────────────────────────────────
+  if (scrollCue) scrollCue.addEventListener('click', () => goTo(1));
+
+  // ── Dot clicks ───────────────────────────────────────────────────────────
+  dots.forEach(dot =>
+    dot.addEventListener('click', () => goTo(Number(dot.dataset.index)))
+  );
+
+  // ── Keyboard ─────────────────────────────────────────────────────────────
   document.addEventListener('keydown', (e) => {
-    // Only when no input is focused
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-      e.preventDefault();
-      pageWrap.scrollTo({ top: rsvpSection.offsetTop, behavior: 'smooth' });
-    }
-    if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-      e.preventDefault();
-      pageWrap.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); goTo(1); }
+    if (e.key === 'ArrowUp'   || e.key === 'PageUp')   { e.preventDefault(); goTo(0); }
   });
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  refreshDots();
+  applyParallax();
 })();
 
 // ─────────────────────────────────────────
