@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Theo's Christening · June 13, 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Decorative floating shapes -->
+  <div class="bg-shapes" aria-hidden="true">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+  </div>
+
+  <!-- Floating particles -->
+  <div class="particles" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="page-wrap" id="pageWrap">
+
+    <!-- Section nav dots -->
+    <nav class="section-dots" aria-label="Page sections">
+      <button class="dot dot--active" data-index="0" aria-label="Event details"></button>
+      <button class="dot" data-index="1" aria-label="RSVP form"></button>
+    </nav>
+
+  <main>
+
+    <!-- ── HERO ── -->
+    <section class="hero" aria-labelledby="hero-title">
+
+      <div class="hero-badge fade-in delay-1">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        You're invited
+      </div>
+
+      <!-- Baby photo portrait -->
+      <div class="hero-photo fade-in delay-2" aria-label="Photo of baby Theo">
+        <div class="hero-photo-ring"></div>
+        <div class="hero-photo-frame">
+          <!--
+            ┌──────────────────────────────────────────────────────────┐
+            │  Replace "theo.jpg" with your actual image filename.     │
+            │  Put the image file in the same folder as index.html.    │
+            │  Recommended: square crop, at least 400×400px.           │
+            └──────────────────────────────────────────────────────────┘
+          -->
+          <img src="theo.jpg" alt="Baby Theo" class="hero-photo-img" />
+          <div class="hero-photo-placeholder" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <span>Add photo of Theo</span>
+          </div>
+        </div>
+        <div class="hero-photo-badge" aria-hidden="true">🕊</div>
+      </div>
+
+      <div class="hero-cross fade-in delay-3" aria-hidden="true">✝</div>
+
+      <h1 id="hero-title" class="fade-in delay-3">
+        <span class="title-small">The Christening of</span>
+        <span class="title-name">Theo</span>
+      </h1>
+
+      <p class="hero-verse fade-in delay-3">
+        <em>"Let the little children come to me."</em><br />
+        <span>— Matthew 19:14</span>
+      </p>
+
+      <div class="event-details fade-in delay-4">
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <div class="detail-label">Date</div>
+            <div class="detail-value">June 13, 2026 · Saturday</div>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="detail-label">Time</div>
+            <div class="detail-value">10:45 AM</div>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="detail-label">Venue</div>
+            <div class="detail-value">National Shrine of Our Lady of Guadalupe</div>
+            <div class="detail-sub">Guadalupe Nuevo Barangay Hall</div>
+          </div>
+        </div>
+		
+		<div class="detail-card">
+		  <div class="detail-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+		  </div>
+		  <div>
+			<div class="detail-label">Dress Code</div>
+			<div class="detail-value">Light Colors</div>
+			<div class="detail-sub">White is most preferred ✨</div>
+		  </div>
+		</div>
+      </div>
+
+      <button class="scroll-cue fade-in delay-5" id="scrollCue" aria-label="Scroll to RSVP form">
+        <span>RSVP below</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+    </section>
+
+    <!-- ── RSVP FORM ── -->
+    <section class="rsvp-section" aria-labelledby="rsvp-title">
+
+      <div class="rsvp-card fade-in delay-1">
+
+        <div class="rsvp-header">
+          <div class="rsvp-deco" aria-hidden="true">🕊</div>
+          <h2 id="rsvp-title">Will you be joining us?</h2>
+          <p>We'd love to celebrate this blessed day with you. Let us know if you can make it.</p>
+        </div>
+
+        <!-- Success state -->
+        <div class="success-state hidden" id="successState" role="status" aria-live="polite">
+          <div class="success-icon">🎀</div>
+          <h3>Thank you so much!</h3>
+          <p id="successMessage">We've received your RSVP and can't wait to celebrate with you.</p>
+          <button class="btn-secondary" id="rsvpAgainBtn">Submit another response</button>
+        </div>
+
+        <!-- Form -->
+        <form id="rsvpForm" novalidate>
+
+          <!-- Full Name -->
+          <div class="field-group">
+            <label for="fullName">Full Name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="Your full name"
+              autocomplete="name"
+              required
+            />
+            <span class="field-error" id="nameError">Please enter your name.</span>
+          </div>
+
+          <!-- Attendance -->
+          <div class="field-group">
+            <label>Attendance <span class="required">*</span></label>
+            <div class="attendance-toggle" role="radiogroup" aria-label="Attendance">
+              <label class="toggle-option">
+                <input type="radio" name="attendance" value="yes" required />
+                <span class="toggle-btn">
+                  <span class="toggle-emoji">🎉</span>
+                  Yes, I'll be there!
+                </span>
+              </label>
+              <label class="toggle-option">
+                <input type="radio" name="attendance" value="no" />
+                <span class="toggle-btn">
+                  <span class="toggle-emoji">💙</span>
+                  Can't make it
+                </span>
+              </label>
+            </div>
+            <span class="field-error" id="attendanceError">Please select your attendance.</span>
+          </div>
+
+          <!-- Guests (conditionally shown) -->
+          <div class="field-group guest-field hidden" id="guestField">
+            <label for="guestCount">Number of Guests</label>
+            <div class="number-input">
+              <button type="button" class="num-btn" id="decrementBtn" aria-label="Decrease guests">−</button>
+              <input
+                type="number"
+                id="guestCount"
+                name="guestCount"
+                value="1"
+                min="1"
+                max="10"
+                aria-label="Number of guests including yourself"
+              />
+              <button type="button" class="num-btn" id="incrementBtn" aria-label="Increase guests">+</button>
+            </div>
+            <span class="field-hint">Including yourself</span>
+          </div>
+
+          <!-- Guest Names (dynamically rendered by JS) -->
+          <div class="field-group guest-names-field hidden" id="guestNamesField">
+            <label>Guest Names <span class="optional-label">optional</span></label>
+            <div id="guestNamesList" class="guest-names-list"></div>
+          </div>
+
+          <!-- Message / Wishes -->
+          <div class="field-group">
+            <label for="message">
+              Blessing for Theo
+              <span class="optional-label">optional</span>
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="3"
+              placeholder="Leave a blessing or warm wish for Theo…"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span class="btn-text">Confirm RSVP</span>
+            <span class="btn-loading hidden">
+              <svg class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg>
+              Sending…
+            </span>
+          </button>
+
+          <p class="form-note">
+            Kindly respond by <strong>June 10, 2026</strong>.
+          </p>
+
+        </form>
+
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="site-footer fade-in">
+
+	  <div class="gift-note">
+		<div class="gift-note-icon" aria-hidden="true">🎀</div>
+		<p class="gift-note-verse">
+		  Instead of toys that may amuse,<br />
+		  a monetary blessing, if you choose.<br />
+		  To assist their journey from start to end,<br />
+		  your generosity, we commend.
+		</p>
+	  </div>
+
+	  <p>Made with <span class="heart">♥</span> for baby Theo's special day</p>
+	  <p class="footer-date">June 13, 2026</p>
+	</footer>
+
+  </main>
+
+  </div><!-- /.page-wrap -->
+
+
+  <!-- ── ERROR MODAL ── -->
+  <div class="modal-overlay hidden" id="errorModal" role="dialog" aria-modal="true" aria-labelledby="errorModalTitle">
+    <div class="modal-card">
+      <div class="modal-icon modal-icon--error" aria-hidden="true">⚠️</div>
+      <h3 id="errorModalTitle">Couldn't send your RSVP</h3>
+      <p id="errorModalMessage">Something went wrong while submitting. Your response has been saved locally — please try again or reach out to the organizer directly.</p>
+      <div class="modal-actions">
+        <button class="btn-modal-retry" id="modalRetryBtn">Try Again</button>
+        <button class="btn-modal-dismiss" id="modalDismissBtn">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin link (hidden, accessible via ?admin=1) -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <div class="admin-inner">
+      <h3>RSVP Responses</h3>
+      <div class="admin-toolbar">
+        <span id="adminCount">0 responses</span>
+        <button class="admin-btn" id="exportBtn">Export XLSX</button>
+        <button class="admin-btn admin-btn-close" id="closeAdminBtn">Close</button>
+      </div>
+      <div class="admin-stats" id="adminStats">
+        <div class="stat-item">
+          <span class="stat-val" id="statAttending">—</span>
+          <span class="stat-label">Attending</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val" id="statNotAttending">—</span>
+          <span class="stat-label">Not Attending</span>
+        </div>
+        <div class="stat-item stat-item--highlight">
+          <span class="stat-val" id="statHeadcount">—</span>
+          <span class="stat-label">Total Headcount</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val" id="statCompanions">—</span>
+          <span class="stat-label">Companions</span>
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table id="adminTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Attending</th>
+              <th>Guests</th>
+              <th>Guest Names</th>
+              <th>Message</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+        <p class="admin-empty" id="adminEmpty">No responses yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SheetJS for multi-sheet XLSX export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+
+  <style>
+    .admin-stats {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      padding: .75rem 1rem;
+      background: rgba(0,0,0,.15);
+      border-radius: .5rem;
+      margin-bottom: .75rem;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 70px;
+      padding: .4rem .5rem;
+      border-radius: .4rem;
+      background: rgba(255,255,255,.05);
+    }
+    .stat-item--highlight { background: rgba(99,102,241,.25); }
+    .stat-val   { font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
+    .stat-label { font-size: .68rem; opacity: .65; text-transform: uppercase; letter-spacing: .05em; margin-top: .15rem; }
+  </style>
+</body>
+</html>
